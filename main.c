@@ -1,76 +1,30 @@
 #include "monty.h"
+global_t vglo;
 
-/**
- * gettokens - stores each line of the file input
- *
- * @head: head of the single linked list
- * @buffer: text of the file
- * Return: no return
- */
-void gettokens(line_list **head, char *buffer)
+void start_vglo(void)
 {
-	line_list *go;
-	char *line = NULL;
-	char *tokens = NULL;
-	char *tokns[2] = {NULL, NULL};
-
-	tokens = _strtoky(buffer, "\n");
-	while (tokens)
-	{
-		add_line_node_end(head, tokens);
-		tokens = _strtoky(NULL, "\n");
-	}
-
-	go = *head;
-	while (go)
-	{
-		line = _strtoky(go->line, " \t");
-		tokns[0] = line;
-		if (line)
-		{
-			printf("%s\n", tokns[0]);
-			line = _strtoky(NULL, " \t");
-			tokns[1] = line;
-		}
-		go = go->next;
-	}
+	vglo.lifo = 1;
+	vglo.cont = 1;
+	vglo.arg = NULL;
+	vglo.head = NULL;
 }
 
-/**
- * _gettext - returns the text of a file
- *
- * @fd: file descriptor
- * Return: a buffer of the text
- */
-char *_gettext(int fd)
+FILE *check_input(int argc, char *argv[])
 {
-	int num;
-	char letter[1] = {0};
-	char *li;
-	size_t bz;
-
-	num = 0;
-	li = NULL;
-	bz = 0;
-
-	while ((num = read(fd, letter, 1)) > 0)
-	{
-		if (bz == 0)
-			li = _calloc(bz + 3, sizeof(char));
-		else
-			li = _realloc(li, bz, bz + 3);
-		if (!li)
-		{
-			num = 0;
-			break;
-		}
-		li[bz] = letter[0], li[bz + 1] = '\n';
-		li[bz + 2] = '\0', bz++;
-	}
-
-	return (li);
+	FILE *fd;
+	if (argc == 1 || argc > 2)
+        {
+                dprintf(2, "USAGE: monty file\n");
+                exit(EXIT_FAILURE);
+        }
+        fd = fopen(argv[1], "r");
+        if (fd == NULL)
+        {
+                dprintf(2, "Error: Can't open file %s\n", argv[1]);
+                exit(EXIT_FAILURE);
+        }
+	return (fd);
 }
-
 /**
  * main - Entry point
  *
@@ -80,30 +34,32 @@ char *_gettext(int fd)
  */
 int main(int argc, char *argv[])
 {
-	int fd;
-	char *buffer;
-	line_list *head = NULL;
-/*	stack_t *head = NULL;*/
+	void (*f)(stack_t **stack, unsigned int line_number);
+	FILE *fd;
+	size_t size = 256;
+	ssize_t nlines = 0;
+	char *buffer = NULL,  *lines[2] = {NULL, NULL};
 
-	if (argc == 1 || argc > 2)
+	fd = check_input(argc, argv);
+	start_vglo();
+	nlines = getline(&buffer, &size, fd);
+	while (nlines != -1)
 	{
-		dprintf(2, "USAGE: monty file\n");
-		exit(EXIT_FAILURE);
+		lines[0] = _strtoky(buffer, " \t\n");
+		if (lines[0])
+		{
+			f = get_opcodes(lines[0]);
+			if (!f)
+			{
+				dprintf(2, "L%u: ", vglo.cont);
+				dprintf(2, "unknown instruction %s\n", lines[0]);
+				exit(EXIT_FAILURE);
+			}
+			vglo.arg = _strtoky(NULL, " \t\n");
+			f(&vglo.head, vglo.cont);
+		}
+		nlines = getline(&buffer, &size, fd);
+		vglo.cont++;
 	}
-
-	fd = open(argv[1], O_RDONLY);
-
-	if (fd == -1)
-	{
-		dprintf(2, "Error: Can't open file %s\n", argv[1]);
-		exit(EXIT_FAILURE);
-	}
-
-	buffer = _gettext(fd);
-	gettokens(&head, buffer);
-
-	free(buffer);
-	free_line_list(&head);
-
 	return (0);
 }

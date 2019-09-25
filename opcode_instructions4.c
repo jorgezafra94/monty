@@ -44,19 +44,19 @@ void _rotr(stack_t **doubly, unsigned int cline)
 	(void)cline;
 
 	if (*doubly == NULL)
-                return;
+		return;
 
 	if ((*doubly)->next == NULL)
 		return;
 
-        aux = *doubly;
+	aux = *doubly;
 
-        for (; aux->next != NULL; aux = aux->next)
-                ;
+	for (; aux->next != NULL; aux = aux->next)
+		;
 
-        aux->prev->next = NULL;
-        aux->next = *doubly;
+	aux->prev->next = NULL;
+	aux->next = *doubly;
 	aux->prev = NULL;
-        (*doubly)->prev = aux;
+	(*doubly)->prev = aux;
 	*doubly = aux;
 }

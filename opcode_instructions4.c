@@ -25,12 +25,13 @@ void _rotl(stack_t **doubly, unsigned int cline)
 	for (; aux2->next != NULL; aux2 = aux2->next)
 		;
 
-	aux1->next = NULL;
+	aux1->prev = NULL;
 	aux2->next = *doubly;
 	(*doubly)->next = NULL;
 	(*doubly)->prev = aux2;
 	*doubly = aux1;
 }
+
 /**
  * _rotr - reverse the stack
  *

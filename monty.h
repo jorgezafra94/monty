@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <ctype.h>
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
  * @n: integer
@@ -21,7 +22,23 @@ typedef struct stack_s
 	struct stack_s *prev;
 	struct stack_s *next;
 } stack_t;
-
+/**
+ * struct globals - global structure to use in the functions
+ * @lifo: is stack or queue
+ * @cont: current line
+ * @arg: second parameter inside the current line
+ * @head: doubly linked list
+ *
+ * Description: doubly linked list node structure
+ * for stack, queues, LIFO, FIFO Holberton project
+ */
+typedef struct globals
+{
+	int lifo;
+	unsigned int cont;
+	char  *arg;
+	stack_t *head;
+} global_t;
 /**
  * struct instruction_s - opcode and its function
  * @opcode: the opcode
@@ -36,23 +53,22 @@ typedef struct instruction_s
 	void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
 
-/**
- * struct line_list_s - single linked list
- * @line: command line
- * @next: next node
- * Description: single linked list to store command lines
- */
-typedef struct line_list_s
-{
-	char *line;
-	struct line_list_s *next;
-} line_list;
+extern global_t vglo;
 
-void *_calloc(unsigned int nmemb, unsigned int size);
-void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
-line_list *add_line_node_end(line_list **head, char *line);
-void free_line_list(line_list **head);
-char *_strtoky(char *s, char *d);
+/* opcode_instructuions*/
+void _push(stack_t **stack, unsigned int line_number);
+void _pall(stack_t **stack, unsigned int line_number);
+void _pint(stack_t **doubly, unsigned int cline);
+void _pop(stack_t **doubly, unsigned int cline);
+void _swap(stack_t **doubly, unsigned int cline);
+/*get function*/
+void (*get_opcodes(char *opc))(stack_t **stack, unsigned int line_number);
+/*imported functions*/
 int _sch(char *s, char c);
-
+char *_strtoky(char *s, char *d);
+void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
+void *_calloc(unsigned int nmemb, unsigned int size);
+int _strcmp(char *s1, char *s2);
+stack_t *add_dnodeint_end(stack_t **head, const int n);
+stack_t *add_dnodeint(stack_t **head, const int n);
 #endif

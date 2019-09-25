@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 	while (nlines != -1)
 	{
 		lines[0] = _strtoky(vglo.buffer, " \t\n");
-		if (lines[0])
+		if (lines[0] && lines[0][0] != '#')
 		{
 			f = get_opcodes(lines[0]);
 			if (!f)

@@ -116,7 +116,7 @@ void _pchar(stack_t **doubly, unsigned int cline)
 		free_vglo();
 		exit(EXIT_FAILURE);
 	}
-	if ((*doubly)->n < 0 || (*doubly)->n > 127)
+	if ((*doubly)->n <= 0 || (*doubly)->n >= 127)
 	{
 		dprintf(2, "L%u: can't pchar, value out of range\n", cline);
 		free_vglo();

@@ -25,7 +25,7 @@ void _rotl(stack_t **doubly, unsigned int cline)
 	for (; aux2->next != NULL; aux2 = aux2->next)
 		;
 
-	aux1->prev = NULL;
+	aux1->next = NULL;
 	aux2->next = *doubly;
 	(*doubly)->next = NULL;
 	(*doubly)->prev = aux2;
@@ -41,21 +41,22 @@ void _rotl(stack_t **doubly, unsigned int cline)
 void _rotr(stack_t **doubly, unsigned int cline)
 {
 	stack_t *aux = NULL;
-	stack_t *temp = NULL;
 	(void)cline;
 
 	if (*doubly == NULL)
                 return;
 
-	while ((*doubly)->next)
-	{
-		aux = *doubly;
-		*doubly = (*doubly)->next;
-		temp = aux->next;
-		aux->next = aux->prev;
-		aux->prev = temp;
-	}
-	temp = (*doubly)->next;
-	(*doubly)->next = (*doubly)->prev;
-	(*doubly)->prev = temp;
+	if ((*doubly)->next == NULL)
+		return;
+
+        aux = *doubly;
+
+        for (; aux->next != NULL; aux = aux->next)
+                ;
+
+        aux->prev->next = NULL;
+        aux->next = *doubly;
+	aux->prev = NULL;
+        (*doubly)->prev = aux;
+	*doubly = aux;
 }

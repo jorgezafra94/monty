@@ -44,6 +44,9 @@ void _rotr(stack_t **doubly, unsigned int cline)
 	stack_t *temp = NULL;
 	(void)cline;
 
+	if (*doubly == NULL)
+                return;
+
 	while ((*doubly)->next)
 	{
 		aux = *doubly;
